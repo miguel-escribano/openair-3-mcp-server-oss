@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/miguel-escribano/openair-3-mcp-server-oss/schemas/series.v1.json",
+  "title": "AirQualitySeriesV1",
+  "type": "object",
+  "required": ["timestamps", "series"],
+  "properties": {
+    "timestamps": {
+      "type": "array",
+      "items": { "type": "string", "format": "date-time" },
+      "minItems": 1
+    },
+    "series": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "unit", "values"],
+        "properties": {
+          "name": { "type": "string" },
+          "unit": { "type": "string" },
+          "values": {
+            "type": "array",
+            "items": { "type": "number" }
+          }
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["file", "aurn", "europe", "adms", "aurn_csv", "json_export", "other"]
+        },
+        "site": { "type": "string" },
+        "timezone": { "type": "string" },
+        "lat": { "type": "number" },
+        "lon": { "type": "number" }
+      }
+    }
+  }
+}

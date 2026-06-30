@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/miguel-escribano/openair-3-mcp-server-oss/schemas/artifact.v1.json",
+  "title": "PlotArtifactV1",
+  "type": "object",
+  "required": ["artifact", "type", "summary"],
+  "properties": {
+    "artifact": {
+      "type": "string",
+      "description": "Absolute path or URL to PNG/SVG"
+    },
+    "type": { "type": "string", "enum": ["png", "svg"] },
+    "summary": { "type": "string" },
+    "tool": { "type": "string" }
+  }
+}
