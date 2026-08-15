@@ -285,6 +285,65 @@ else:
 
         check("R: time_plot local timezone axis", _check_local_tz_axis)
 
+        def _check_conditional_quantile_distinct_columns():
+            # Regression test for the 2026-08 audit finding: conditional_quantile
+            # compares obs (series[0]) vs mod (series[1]) OF THE SAME POLLUTANT,
+            # and the tool schema tells callers to name series after the
+            # pollutant (e.g. "Predicted CO2" vs "Observed CO2"). Before the
+            # used-name dedup fix, both column ids canonicalized to "co2" and
+            # the second silently overwrote the first in the shared data.frame,
+            # so the tool compared a column against a copy of itself with no
+            # error surfaced. The generic image-tool smoke check below only
+            # verifies a PNG exists, which passed even with that bug present —
+            # this check inspects the actual column ids in the returned summary.
+            script = R_SCRIPTS_DIR / "conditional_quantile.R"
+            payload = build_payload(
+                "conditional_quantile", {"input_type": "series", "output_type": "image"}
+            )
+            result = run_r_script(script, payload, timeout=90)
+            summary = result.get("summary", "")
+            if "obs=" not in summary or " vs mod=" not in summary:
+                raise RuntimeError(f"unexpected summary shape: {summary!r}")
+            obs_col = summary.split("obs=", 1)[1].split(" vs mod=", 1)[0]
+            mod_col = summary.split(" vs mod=", 1)[1]
+            if obs_col == mod_col:
+                raise RuntimeError(
+                    f"obs and mod resolved to the SAME column ({obs_col!r}) — "
+                    "same-pollutant series names collided, see r/common/series_df.R dedup"
+                )
+            return f"obs={obs_col} mod={mod_col} (distinct)"
+
+        check(
+            "R: conditional_quantile same-pollutant column collision",
+            _check_conditional_quantile_distinct_columns,
+        )
+
+        def _check_taylor_diagram_distinct_columns():
+            # Same collision class as conditional_quantile above, but for obs
+            # vs multiple MODEL series of the same pollutant.
+            script = R_SCRIPTS_DIR / "taylor_diagram.R"
+            payload = build_payload(
+                "taylor_diagram", {"input_type": "series", "output_type": "image"}
+            )
+            result = run_r_script(script, payload, timeout=60)
+            summary = result.get("summary", "")
+            if "obs=" not in summary or ", models=" not in summary:
+                raise RuntimeError(f"unexpected summary shape: {summary!r}")
+            obs_col = summary.split("obs=", 1)[1].split(", models=", 1)[0]
+            model_cols = [c.strip() for c in summary.split(", models=", 1)[1].split(",")]
+            all_cols = [obs_col] + model_cols
+            if len(set(all_cols)) != len(all_cols):
+                raise RuntimeError(
+                    f"obs/model columns collided: obs={obs_col!r} models={model_cols!r} — "
+                    "same-pollutant series names collided, see r/common/series_df.R dedup"
+                )
+            return f"obs={obs_col} models={model_cols} (all distinct)"
+
+        check(
+            "R: taylor_diagram same-pollutant column collision",
+            _check_taylor_diagram_distinct_columns,
+        )
+
         for script_path, manifest in discover_scripts():
             tool_name = manifest["name"]
             output_type = manifest.get("output_type", "image")

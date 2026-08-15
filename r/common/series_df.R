@@ -95,12 +95,21 @@ openair_series_display_label <- function(s) {
 }
 
 #' Short pollutant ids for MCP text and plot titles (openair auto.text handles legends).
+#' Dedups the same way openair_build_series_df()/openair_build_wind_df() do,
+#' so e.g. an indoor-vs-outdoor CO2 comparison reads as "co2, co2_2" in
+#' summary text instead of a duplicated, indistinguishable "co2, co2".
 openair_summary_labels <- function(payload) {
   series <- payload$series
   if (is.null(series) || length(series) == 0) return(character(0))
-  vapply(seq_along(series), function(i) {
-    openair_series_col_id(series[[i]]$name, i)
-  }, character(1))
+  labels <- character(length(series))
+  used <- character(0)
+  for (i in seq_along(series)) {
+    col <- openair_series_col_id(series[[i]]$name, i)
+    if (col %in% used) col <- paste0(col, "_", i)
+    used <- c(used, col)
+    labels[i] <- col
+  }
+  labels
 }
 
 #' Ensure payload carries meta.timezone (from meta or prepare's top-level timezone).

@@ -16,10 +16,20 @@ if (length(series_list) < 2) stop("conditional_quantile requires obs (series[0])
 
 s_obs <- series_list[[1]]
 s_mod <- series_list[[2]]
+# obs/mod compare the SAME pollutant by design (predicted vs observed), so a
+# naive column id would collide whenever callers name series the way the
+# tool schema instructs (pollutant + role qualifier, e.g. "Predicted CO2" vs
+# "Observed CO2"). Dedup exactly like openair_build_series_df()/
+# openair_build_wind_df() do: suffix with "_<index>" on repeat.
+used <- character(0)
 obs_col <- openair_series_col_id(s_obs$name, 1)
 if (!nzchar(obs_col)) obs_col <- "obs"
+if (obs_col %in% used) obs_col <- paste0(obs_col, "_1")
+used <- c(used, obs_col)
 mod_col <- openair_series_col_id(s_mod$name, 2)
 if (!nzchar(mod_col)) mod_col <- "mod"
+if (mod_col %in% used) mod_col <- paste0(mod_col, "_2")
+used <- c(used, mod_col)
 
 df <- data.frame(
   date = as.POSIXct(timestamps, format = "%Y-%m-%dT%H:%M:%OSZ", tz = "UTC"),

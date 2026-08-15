@@ -7,8 +7,18 @@ from datetime import datetime, timedelta, timezone
 _SLOW_TOOLS = frozenset({"polar_cluster", "traj_cluster"})
 _TRAJ_MAP_TOOLS = frozenset({"traj_level", "traj_plot"})
 _FILE_IMPORT_TOOLS = frozenset({"import_adms", "import_aurn_csv"})
-_TWO_SERIES = frozenset({"scatter_plot", "conditional_quantile", "cor_plot"})
-_THREE_SERIES = frozenset({"taylor_diagram"})
+_TWO_SERIES = frozenset({"scatter_plot", "cor_plot"})
+_THREE_SERIES = frozenset(set())
+# conditional_quantile and taylor_diagram compare series of the SAME
+# pollutant by design (predicted vs observed / obs vs models), and the tool
+# schema tells callers to name series after the pollutant. Give them
+# same-pollutant, role-qualified names on purpose so the fixture actually
+# exercises the column-id collision the 2026-08 audit found (both used to
+# canonicalize to one id, e.g. "co2", and silently overwrite each other) —
+# see the dedup added in r/scripts/conditional_quantile.R and
+# r/scripts/taylor_diagram.R.
+_SAME_POLLUTANT_TWO_SERIES = frozenset({"conditional_quantile"})
+_SAME_POLLUTANT_THREE_SERIES = frozenset({"taylor_diagram"})
 _TWO_WIND_SERIES = frozenset({"polar_diff"})
 
 
@@ -167,7 +177,18 @@ def build_payload(tool_name: str, manifest: dict) -> dict | None:
     if tool_name == "theil_sen":
         n = 24 * 30 * 12
     timestamps = _hourly_timestamps(n)
-    if tool_name in _THREE_SERIES:
+    if tool_name in _SAME_POLLUTANT_THREE_SERIES:
+        series = [
+            _series_column("Observed CO2", "ppm", n, 420.0, 0.4),
+            _series_column("Model A CO2", "ppm", n, 415.0, 0.42),
+            _series_column("Model B CO2", "ppm", n, 425.0, 0.38),
+        ]
+    elif tool_name in _SAME_POLLUTANT_TWO_SERIES:
+        series = [
+            _series_column("Predicted CO2", "ppm", n, 420.0, 0.4),
+            _series_column("Observed CO2", "ppm", n, 400.0, 0.5),
+        ]
+    elif tool_name in _THREE_SERIES:
         series = [
             _series_column("obs", "µg/m³", n, 20.0, 0.02),
             _series_column("model_a", "µg/m³", n, 19.0, 0.025),
