@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import os
 import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
@@ -344,6 +345,41 @@ else:
             _check_taylor_diagram_distinct_columns,
         )
 
+        def _check_import_meta_returns_dict():
+            # Regression test for a live-use bug: import_meta.R used to
+            # cat(jsonlite::toJSON(meta, ...)) directly on the filtered
+            # data.frame, which serializes as a bare JSON ARRAY. run_r_script
+            # does json.loads() on stdout with no shape check, so a single-
+            # site query (e.g. site="MY1") returned a Python list instead of
+            # a dict. FastMCP's structured-content validation then rejected
+            # it: "structured_content must be a dict or None. Got list: ...".
+            # Only surfaced by live MCP calls — OPENAIR_SMOKE_NETWORK is
+            # opt-in, so the generic loop below never ran with real data in
+            # normal dev/CI. Fix: import_meta.R now always emits a JSON
+            # OBJECT, {"sites": [...]}, single site or many.
+            script = R_SCRIPTS_DIR / "import_meta.R"
+            result = run_r_script(
+                script, {"site": "MY1", "start_date": "2024-01-01", "end_date": "2024-01-07", "network": "aurn"}, timeout=60
+            )
+            if not isinstance(result, dict):
+                raise RuntimeError(f"expected dict, got {type(result).__name__}: {result!r:.200}")
+            sites = result.get("sites")
+            if not isinstance(sites, list) or not sites:
+                raise RuntimeError(f"expected non-empty 'sites' list, got: {result!r:.200}")
+            site = sites[0]
+            for key in ("code", "site", "latitude", "longitude"):
+                if key not in site:
+                    raise RuntimeError(f"site record missing '{key}': {site!r}")
+            return f"dict with sites=[{site['code']!r}] lat={site['latitude']} lon={site['longitude']}"
+
+        if os.getenv("OPENAIR_SMOKE_NETWORK", "").strip() not in ("1", "true", "yes"):
+            skip(
+                "R: import_meta returns dict, not bare list",
+                "network smoke skipped — set OPENAIR_SMOKE_NETWORK=1",
+            )
+        else:
+            check("R: import_meta returns dict, not bare list", _check_import_meta_returns_dict)
+
         for script_path, manifest in discover_scripts():
             tool_name = manifest["name"]
             output_type = manifest.get("output_type", "image")
@@ -374,6 +410,13 @@ else:
                         raise RuntimeError("No stats/summary in JSON")
                     return (result.get("summary") or "stats ok")[:80]
                 if ot == "series":
+                    if result.get("sites") is not None:
+                        # import_meta: site-metadata lookup, not a real time
+                        # series — no timestamps/series columns by design.
+                        n = len(result["sites"])
+                        if n == 0:
+                            raise RuntimeError("Empty 'sites' list returned")
+                        return f"sites JSON, {n} site(s)"
                     if not result.get("timestamps") and not result.get("series"):
                         raise RuntimeError("No series JSON returned")
                     n = len(result.get("timestamps") or [])

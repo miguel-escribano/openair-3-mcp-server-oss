@@ -14,6 +14,15 @@ if (is.null(meta) || nrow(meta) == 0) stop(paste0("No metadata for network='", n
 if (!is.null(payload$site)) {
   site_filter <- unlist(payload$site)
   meta <- meta[meta$code %in% site_filter | meta$site %in% site_filter, ]
+  if (nrow(meta) == 0) {
+    stop(paste0(
+      "No metadata for site(s) '", paste(site_filter, collapse = "', '"),
+      "' on network='", network, "'"
+    ))
+  }
 }
 
-cat(jsonlite::toJSON(meta, auto_unbox = TRUE, na = "null"))
+# Always return a JSON object ({"sites": [...]}), never a bare array — a bare
+# top-level array fails FastMCP's structured-content validation
+# ("structured_content must be a dict or None. Got list: ...").
+cat(jsonlite::toJSON(list(sites = meta), auto_unbox = TRUE, na = "null"))
