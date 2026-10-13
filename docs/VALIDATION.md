@@ -13,7 +13,7 @@ Server `fixtures/*.csv` are **pytest samples only** — not Copilot chat data. G
 
 Not all 45 tools carry the same validation depth — be explicit about it:
 
-- **Golden-path validated (~15):** the 11 pollutant tools + 4 wind tools exercised end-to-end against a deployed server via the plugin Felisa harness (`time_plot`, `calendar_plot`, `time_variation`, `trend_level`, `scatter_plot`, `cor_plot`, `aq_stats`, `smooth_trend`, `rolling_mean`, `time_average`, plus the wind/polar set).
+- **Golden-path validated:** 12 series exercises against a deployed server via the plugin Felisa harness (`tests/run_series_exercises.py` in the client, results at lines 87-148). Exercise 12 is `summary_plot` (lines 146-148). Those 12 exercises cover 11 distinct series tools, because `time_plot` is called twice. Plus 4 wind tools (`wind_rose`, `polar_plot`, `pollution_rose`, `percentile_rose` in `tests/run_wind_exercises.py`, lines 46-50).
 - **Smoke-only (the rest):** registered and run on synthetic payloads by `check_integrations.py` (and the `r-smoke` CI workflow) — verifies the tool wires up and returns a PNG/JSON, not scientific correctness on real data. Includes the heavier/rarer tools (`polar_cluster`, `traj_*`, `taylor_diagram`, `conditional_quantile`, …).
 
 Availability is not a maturity claim; treat smoke-only tools as functional but unvalidated against a real golden path.
@@ -84,7 +84,7 @@ Harness lives in the **plugin repo**: `openair-3-mcp-client-plugin-oss/tests/`.
 pip install httpx
 export OPENAIR_MCP_TOKEN=…
 cd openair-3-mcp-client-plugin-oss
-python tests/run_series_exercises.py   # 11 exercises → tests/output/series/
+python tests/run_series_exercises.py   # 12 exercises → tests/output/series/
 python tests/run_wind_exercises.py     # 4 wind plots → tests/output/wind/
 ```
 

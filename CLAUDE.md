@@ -70,6 +70,14 @@ with `gap_policy=preserve` nulls.
 Regression: `tests/test_time_grid.py`, `check_integrations.py` →
 `R: time_variation DST gaps`.
 
+## Column-id collision (fixed in git, 2026-08-16)
+
+Commit `6ed313d` suffixes a repeated column id in `r/scripts/conditional_quantile.R`, `r/scripts/taylor_diagram.R`, and `r/common/series_df.R`. It is an ancestor of HEAD `08a7374` (2026-09-02) and later than content tag 0.1.0. It is separate from the DST fix above, and it is not a client URL change.
+
+## import_meta (open, not committed)
+
+HEAD of `r/scripts/import_meta.R` is still `toJSON(meta, auto_unbox = TRUE)` (last commit of that path: `ea16591`, 2026-06-30). The one-station wrap `list(sites = meta)` is not committed. Unstaged edits in `check_integrations.py` are not committed either.
+
 ## Quick troubleshooting
 
 - If tool registration fails with schema/runtime errors, run the server with the
@@ -77,8 +85,7 @@ Regression: `tests/test_time_grid.py`, `check_integrations.py` →
 - For plotting, prefer deterministic aligned input from
   `prepare_series_for_openair` before calling `time_plot`.
 - If production endpoint is unstable, verify with `health_r` and `python check_integrations.py` on the server host.
-- If plot fails with `replacement has N rows, data has M rows`, redeploy latest
-  openair-3-mcp (DST grid + `openair_mcp_values` fix — see **Known bugs** above).
+- If a plot fails with `replacement has N rows, data has M rows`, that DST fix is already in this OSS repo (see **Known bugs** above). This file's server is `openair-3-mcp-server-oss`. On the host (2026-10-13) unit `mcp-openair-3-mcp-server-oss` listens on port 3007. Unit `mcp-openair-3-mcp` is still active on port 3006.
 
 ## Adding a tool
 

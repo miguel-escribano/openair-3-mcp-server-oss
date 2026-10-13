@@ -11,6 +11,10 @@ This repo is versioned together with [openair-3-mcp-client-plugin-oss](https://g
 - `CITATION.cff` — machine-readable citation metadata (GitHub "Cite this repository").
 - `CONTRIBUTING.md` — dev setup, tool-adding guide, testing tiers, PR process.
 
+### Fixed
+
+- Column-id collision in `conditional_quantile` and `taylor_diagram` (`6ed313d`, 2026-08-16). A reused series id is suffixed so obs and model columns of the same pollutant are not the same column. The commit is after content tag 0.1.0 and before `08a7374` (2026-09-02, which added this changelog). It is not a client URL change.
+
 ## [0.1.0] - 2026-06-30
 
 Initial public release of the openair MCP server.
