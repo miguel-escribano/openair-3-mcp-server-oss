@@ -74,9 +74,9 @@ Regression: `tests/test_time_grid.py`, `check_integrations.py` →
 
 Commit `6ed313d` suffixes a repeated column id in `r/scripts/conditional_quantile.R`, `r/scripts/taylor_diagram.R`, and `r/common/series_df.R`. It is an ancestor of HEAD `08a7374` (2026-09-02) and later than content tag 0.1.0. It is separate from the DST fix above, and it is not a client URL change.
 
-## import_meta (open, not committed)
+## import_meta (fixed in git, 2026-10-13)
 
-HEAD of `r/scripts/import_meta.R` is still `toJSON(meta, auto_unbox = TRUE)` (last commit of that path: `ea16591`, 2026-06-30). The one-station wrap `list(sites = meta)` is not committed. Unstaged edits in `check_integrations.py` are not committed either.
+Commit `7a82529` returns one station as a `sites` object in `r/scripts/import_meta.R`. The script stops if the site filter leaves zero rows.
 
 ## Quick troubleshooting
 
