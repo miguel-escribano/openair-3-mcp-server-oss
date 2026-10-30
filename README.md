@@ -96,6 +96,20 @@ fastmcp run server.py:mcp --transport stdio
 
 Then install the [client plugin](https://github.com/miguel-escribano/openair-3-mcp-client-plugin-oss) and wire MCP — [local stdio, localhost HTTP, or remote URL](https://github.com/miguel-escribano/openair-3-mcp-client-plugin-oss#choose-your-setup).
 
+### Reference: Anne on Linode
+
+Production **hosted Anne** (Hermes profile `anne`) uses this repo on the server, not the legacy private `openair-3-mcp` build:
+
+| Item | Value |
+|------|--------|
+| Checkout | `/root/mcp-servers/servers/openair-3-mcp-server-oss` |
+| Deploy | Push `main` → **mcp-deployer** |
+| Hermes MCP URL | `http://127.0.0.1:3007/mcp` (Streamable HTTP) |
+| Public (IDE / token) | `https://mcp.miguel-escribano.com/openair-3-mcp-server-oss/sse` |
+| Client skills on Hermes | Plugin **`openair-client`** ([client plugin repo](https://github.com/miguel-escribano/openair-3-mcp-client-plugin-oss)) |
+
+Orchestration and persona live in the Anne plugin + [inbiot-anne-hermes](https://github.com/miguel-escribano/inbiot-anne-hermes) (`RUNTIME.md`).
+
 ## Getting your data in
 
 | Your data | Where it lives | What to use |
