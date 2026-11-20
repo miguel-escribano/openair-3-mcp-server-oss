@@ -12,7 +12,8 @@ This repo is versioned together with [openair-3-mcp-client-plugin-oss](https://g
 
 - `import_meta` no longer maps generic `pollutants` (import smoke / `import_aurn` only) to `importMeta(pollutant=)`.
 - `import_ukaq` uses openair 3.2 `source=` instead of removed `network=` argument.
-- `dist_plot` smoke fixture uses NO2; plot uses ggplot2 `title=` (not lattice `main`).
+- `dist_plot` smoke fixture uses NO2; plot uses ggplot2 `title=`; coerce `mydata` to tibble (openair 3.2 `distPlot` + plain `data.frame`).
+- `import_meta` maps single site codes (e.g. `MY1`) to `code=`, not pattern `site=` (openair 3.2).
 
 ## [0.2.1] - 2026-11-20
 

@@ -11,6 +11,9 @@ dir.create(artifacts_dir, recursive = TRUE, showWarnings = FALSE)
 
 built <- openair_build_series_df(payload)
 df <- built$df
+if (requireNamespace("tibble", quietly = TRUE)) {
+  df <- tibble::as_tibble(df)
+}
 pollutants <- built$pollutants
 payload <- built$payload
 pollutant <- pollutants[1]

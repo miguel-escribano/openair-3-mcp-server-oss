@@ -13,7 +13,20 @@ if (!is.null(payload$year)) meta_args$year <- payload$year
 poll <- payload$meta_pollutant
 if (!is.null(poll) && length(poll) > 0) meta_args$pollutant <- unlist(poll)
 if (!is.null(payload$code) && length(payload$code) > 0) meta_args$code <- unlist(payload$code)
-if (!is.null(payload$site) && length(payload$site) > 0) meta_args$site <- unlist(payload$site)
+if (!is.null(payload$site) && length(payload$site) > 0) {
+  sites <- unlist(payload$site)
+  if (is.null(meta_args$code)) {
+    looks_code <- function(x) {
+      x <- as.character(x)[1]
+      grepl("^[A-Za-z]{1,4}[0-9]?$", x)
+    }
+    if (length(sites) == 1L && isTRUE(looks_code(sites[1]))) {
+      meta_args$code <- sites
+    } else {
+      meta_args$site <- sites
+    }
+  }
+}
 if (!is.null(payload$site_type) && length(payload$site_type) > 0) {
   meta_args$site_type <- unlist(payload$site_type)
 }

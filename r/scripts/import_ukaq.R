@@ -44,5 +44,5 @@ site_label <- if ("site" %in% names(data)) {
   as.character(site)[1]
 }
 
-out <- openair_df_to_seriesv1(data, meta = list(source = network, site = site_label))
+out <- openair_df_to_seriesv1(data, meta = list(source = source_net, site = site_label))
 cat(jsonlite::toJSON(out, auto_unbox = TRUE, na = "null"))
