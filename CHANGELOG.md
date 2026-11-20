@@ -6,6 +6,22 @@ This repo is versioned together with [openair-3-mcp-client-plugin-oss](https://g
 
 ## [Unreleased]
 
+## [0.2.6] - 2026-11-20
+
+### Fixed
+
+- `openair_plot_title`: human-readable series names (e.g. CO₂) instead of internal column ids.
+- `time_variation`: legend `name.pol` from display labels; tighter y-axis margins on patchwork panels.
+
+### Added
+
+- `PlotOptionsV1.dendrogram` for `cor_plot` (optional; requires legendry≥0.3 when true).
+- Pydantic validation for openair `theme` presets (`default`, `dark`, `modern`, `soft`, `print`); R scripts reject unknown themes at plot time.
+
+### Changed
+
+- `cor_plot`: PNG width scales slightly with title length.
+
 ## [0.2.5] - 2026-11-20
 
 ### Fixed

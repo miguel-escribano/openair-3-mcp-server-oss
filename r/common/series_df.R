@@ -311,7 +311,7 @@ openair_plot_title <- function(payload) {
   series <- payload$series
   if (!is.null(series)) {
     for (i in seq_along(series)) {
-      labels <- c(labels, openair_series_col_id(series[[i]]$name, i))
+      labels <- c(labels, openair_series_display_label(series[[i]]))
     }
   }
   labels <- unique(labels)
@@ -385,6 +385,8 @@ openair_req_cols <- function(df, cols) {
   }
 }
 
+OPENAIR_THEME_PRESETS <- c("default", "dark", "modern", "soft", "print")
+
 #' Optional openair `theme` from plot_options or meta (openair 3.2+).
 openair_plot_theme_value <- function(payload) {
   theme <- NULL
@@ -395,9 +397,39 @@ openair_plot_theme_value <- function(payload) {
     if (!is.null(payload$meta$theme)) theme <- payload$meta$theme
   }
   if (is.null(theme)) return(NULL)
-  th <- as.character(theme)[1]
+  th <- tolower(as.character(theme)[1])
   if (is.na(th) || !nzchar(th)) return(NULL)
+  if (!(th %in% OPENAIR_THEME_PRESETS)) {
+    stop(paste0(
+      "Invalid theme '", theme, "'; use one of: ",
+      paste(OPENAIR_THEME_PRESETS, collapse = ", ")
+    ))
+  }
   th
+}
+
+#' corPlot dendrogram: plot_options$dendrogram overrides auto (legendry>=0.3).
+openair_cor_plot_dendrogram <- function(payload) {
+  legendry_ok <- FALSE
+  if (requireNamespace("legendry", quietly = TRUE)) {
+    if (utils::compareVersion(as.character(packageVersion("legendry")), "0.3.0") >= 0) {
+      legendry_ok <- TRUE
+    }
+  }
+  want <- NULL
+  if (!is.null(payload$plot_options) && is.list(payload$plot_options)) {
+    if (!is.null(payload$plot_options$dendrogram)) {
+      want <- isTRUE(payload$plot_options$dendrogram)
+    }
+  }
+  if (isTRUE(want)) {
+    if (!legendry_ok) {
+      stop("plot_options.dendrogram=true requires R package legendry>=0.3.0 on the server")
+    }
+    return(TRUE)
+  }
+  if (isFALSE(want)) return(FALSE)
+  legendry_ok
 }
 
 openair_plot_extra_args <- function(payload) {

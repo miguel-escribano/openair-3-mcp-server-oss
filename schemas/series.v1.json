@@ -37,17 +37,24 @@
         "timezone": { "type": "string" },
         "lat": { "type": "number" },
         "lon": { "type": "number" },
-        "theme": { "type": "string" }
+        "theme": {
+          "type": "string",
+          "enum": ["default", "dark", "modern", "soft", "print"]
+        }
       }
     },
     "plot_options": {
       "type": "object",
       "properties": {
-        "theme": { "type": "string" },
+        "theme": {
+          "type": "string",
+          "enum": ["default", "dark", "modern", "soft", "print"]
+        },
         "dist_method": {
           "type": "string",
           "enum": ["histogram", "freqpoly", "density", "ecdf"]
-        }
+        },
+        "dendrogram": { "type": "boolean" }
       }
     }
   }

@@ -4,6 +4,9 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import pytest
+from pydantic import ValidationError
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
@@ -89,3 +92,16 @@ def test_prepare_invalid_granularity_error():
     prep = prepare_series_for_openair(data=_felisa_series(), granularity="raw_xm")
     assert "error" in prep
     assert "raw_Nm" in prep["error"]
+
+
+def test_plot_options_rejects_invalid_theme():
+    with pytest.raises(ValidationError):
+        PlotOptionsV1(theme="neon")
+
+
+def test_prepare_accepts_plot_dendrogram_flag():
+    data = _felisa_series().model_copy(
+        update={"plot_options": PlotOptionsV1(dendrogram=False)}
+    )
+    prep = prepare_series_for_openair(data=data, granularity="hourly")
+    assert prep["plot_options"]["dendrogram"] is False

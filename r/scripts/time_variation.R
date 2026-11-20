@@ -19,7 +19,7 @@ if (is.null(series_list) || length(series_list) == 0) stop("series required")
 built <- openair_build_series_df(payload, localize_dates = FALSE)
 df <- built$df
 pollutants <- built$pollutants
-name_pol <- pollutants
+name_pol <- built$labels
 payload <- openair_payload_meta(payload)
 
 use_normalise <- FALSE
@@ -75,6 +75,11 @@ tv_call <- function(..., plot) {
   do.call(openair_plot_call, c(list(openair::timeVariation), tv_args, list(...), list(plot = plot)))
 }
 hide_legend <- function(p) p + ggplot2::theme(legend.position = "none")
+tv_panel_theme <- ggplot2::theme(
+  axis.text.y = ggplot2::element_text(size = 9),
+  axis.title.y = ggplot2::element_text(size = 10, margin = ggplot2::margin(r = 6)),
+  plot.margin = ggplot2::margin(4, 8, 4, 4)
+)
 compose_tv_panels <- function(obj, include_month = TRUE) {
   top <- obj$plot[["hour.weekday"]] +
     ggplot2::guides(fill = "none") +
@@ -85,11 +90,12 @@ compose_tv_panels <- function(obj, include_month = TRUE) {
       hide_legend(obj$plot[["month"]]) |
       hide_legend(obj$plot[["weekday"]])
   }
-  top / row +
+  (top / row +
     patchwork::plot_annotation(
       title = plot_title,
       caption = "mean and 95% confidence interval in mean"
-    )
+    )) &
+    tv_panel_theme
 }
 
 png_h <- if (show_month_panel) 900 else 750

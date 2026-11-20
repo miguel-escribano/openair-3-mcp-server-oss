@@ -1,4 +1,4 @@
-# MANIFEST: {"name": "cor_plot", "description": "Correlation matrix plot for multiple pollutants. Pass 2 or more series.", "input_type": "series", "output_type": "image", "timeout": 60}
+# MANIFEST: {"name": "cor_plot", "description": "Correlation matrix plot for multiple pollutants. Pass 2 or more series. Optional plot_options.dendrogram (needs legendry>=0.3 when true).", "input_type": "series", "output_type": "image", "timeout": 60}
 if (!requireNamespace("jsonlite", quietly = TRUE)) stop("jsonlite required")
 if (!requireNamespace("openair", quietly = TRUE)) stop("openair required")
 source(file.path(Sys.getenv("OPENAIR_R_LIB", unset = "r/common"), "series_df.R"))
@@ -17,16 +17,12 @@ payload <- built$payload
 plot_title <- openair_plot_title(payload)
 summary_labs <- openair_summary_labels(payload)
 
-use_dendrogram <- FALSE
-if (requireNamespace("legendry", quietly = TRUE)) {
-  if (utils::compareVersion(as.character(packageVersion("legendry")), "0.3.0") >= 0) {
-    use_dendrogram <- TRUE
-  }
-}
+use_dendrogram <- openair_cor_plot_dendrogram(payload)
 
 outfile <- file.path(artifacts_dir, paste0("cor_plot_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
-grDevices::png(outfile, width = 900, height = 900, res = 120)
+png_w <- max(1000L, min(1500L, 700L + 12L * nchar(plot_title)))
+grDevices::png(outfile, width = png_w, height = png_w, res = 120)
 openair_plot_call(openair::corPlot, 
   df,
   pollutants = cols,

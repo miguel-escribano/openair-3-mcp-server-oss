@@ -5,6 +5,22 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+OPENAIR_THEME_PRESETS = frozenset({"default", "dark", "modern", "soft", "print"})
+
+
+def _validate_openair_theme(value: object) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise ValueError("theme must be a string")
+    t = value.strip().lower()
+    if not t:
+        return None
+    if t not in OPENAIR_THEME_PRESETS:
+        allowed = ", ".join(sorted(OPENAIR_THEME_PRESETS))
+        raise ValueError(f"theme must be one of: {allowed}")
+    return t
+
 
 # ---------------------------------------------------------------------------
 # Shared column types
@@ -27,6 +43,11 @@ class SeriesMetaV1(BaseModel):
         description="openair plot theme preset (default, dark, modern, soft, print).",
     )
 
+    @field_validator("theme", mode="before")
+    @classmethod
+    def _theme_preset(cls, v: object) -> str | None:
+        return _validate_openair_theme(v)
+
 
 # ---------------------------------------------------------------------------
 # Public input contracts (one per tool group)
@@ -43,6 +64,15 @@ class PlotOptionsV1(BaseModel):
         default=None,
         description="distPlot method when using dist_plot.",
     )
+    dendrogram: bool | None = Field(
+        default=None,
+        description="corPlot dendrogram when legendry>=0.3; false forces off, true forces on.",
+    )
+
+    @field_validator("theme", mode="before")
+    @classmethod
+    def _theme_preset(cls, v: object) -> str | None:
+        return _validate_openair_theme(v)
 
 
 class SeriesV1(BaseModel):
