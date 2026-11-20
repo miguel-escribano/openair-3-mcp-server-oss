@@ -6,6 +6,12 @@ This repo is versioned together with [openair-3-mcp-client-plugin-oss](https://g
 
 ## [Unreleased]
 
+## [0.2.5] - 2026-11-20
+
+### Fixed
+
+- `time_variation`: omit the monthly panel when the series span is under 60 days (patchwork compose for multi- and single-series).
+
 ## [0.2.4] - 2026-11-20
 
 ### Fixed

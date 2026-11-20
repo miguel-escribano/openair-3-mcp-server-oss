@@ -54,52 +54,64 @@ units <- unique(Filter(nzchar, vapply(series_list, function(s) {
 }, character(1))))
 ylab_text <- if (length(units) == 1) units[[1]] else "value"
 
-grDevices::png(outfile, width = 1400, height = 900, res = 120)
+d_valid <- df$date[!is.na(df$date)]
+span_days <- if (length(d_valid) >= 2) {
+  as.numeric(difftime(max(d_valid), min(d_valid), units = "days"))
+} else {
+  0
+}
+show_month_panel <- span_days >= 60
+
+tv_args <- list(
+  df,
+  pollutant = pollutants,
+  normalise = use_normalise,
+  name.pol = name_pol,
+  local.tz = local_tz,
+  conf.int = 0.95,
+  ylab = ylab_text
+)
+tv_call <- function(..., plot) {
+  do.call(openair_plot_call, c(list(openair::timeVariation), tv_args, list(...), list(plot = plot)))
+}
+hide_legend <- function(p) p + ggplot2::theme(legend.position = "none")
+compose_tv_panels <- function(obj, include_month = TRUE) {
+  top <- obj$plot[["hour.weekday"]] +
+    ggplot2::guides(fill = "none") +
+    ggplot2::theme(legend.position = "top", legend.title = ggplot2::element_blank())
+  row <- hide_legend(obj$plot[["hour"]]) | hide_legend(obj$plot[["weekday"]])
+  if (isTRUE(include_month)) {
+    row <- hide_legend(obj$plot[["hour"]]) |
+      hide_legend(obj$plot[["month"]]) |
+      hide_legend(obj$plot[["weekday"]])
+  }
+  top / row +
+    patchwork::plot_annotation(
+      title = plot_title,
+      caption = "mean and 95% confidence interval in mean"
+    )
+}
+
+png_h <- if (show_month_panel) 900 else 750
+grDevices::png(outfile, width = 1400, height = png_h, res = 120)
 if (length(pollutants) > 1) {
   # Multi-series: openair (ggplot2 backend, v3.1.0) emits one colour legend per
   # sub-panel, so patchwork shows the key 2x (4 entries for 2 series). Build the
   # panels with plot=FALSE, then compose manually keeping the legend on the top
   # weekday row only. conf.int=0.95 is fixed, so the caption is constant.
-  obj <- openair_plot_call(openair::timeVariation, 
-    df,
-    pollutant = pollutants,
-    normalise = use_normalise,
-    name.pol = name_pol,
-    local.tz = local_tz,
-    conf.int = 0.95,
-    ylab = ylab_text,
-    plot = FALSE
-  )
-  top <- obj$plot[["hour.weekday"]] +
-    ggplot2::guides(fill = "none") +
-    ggplot2::theme(legend.position = "top", legend.title = ggplot2::element_blank())
-  hide <- function(p) p + ggplot2::theme(legend.position = "none")
-  combined <- (top / (hide(obj$plot[["hour"]]) |
-                      hide(obj$plot[["month"]]) |
-                      hide(obj$plot[["weekday"]]))) +
-    patchwork::plot_annotation(
-      title = plot_title,
-      caption = "mean and 95% confidence interval in mean"
-    )
-  print(combined)
+  obj <- tv_call(plot = FALSE)
+  print(compose_tv_panels(obj, include_month = show_month_panel))
+} else if (show_month_panel) {
+  # Single series: direct render when monthly panel is meaningful.
+  tv_call(key = FALSE, main = plot_title, plot = TRUE)
 } else {
-  # Single series: no overlap/duplication; keep the simple direct render. A lone
-  # pollutant otherwise draws a redundant doubled key, so suppress it.
-  openair_plot_call(openair::timeVariation, 
-    df,
-    pollutant = pollutants,
-    normalise = use_normalise,
-    name.pol = name_pol,
-    local.tz = local_tz,
-    conf.int = 0.95,
-    ylab = ylab_text,
-    key = FALSE,
-    main = plot_title
-  )
+  obj <- tv_call(plot = FALSE)
+  print(compose_tv_panels(obj, include_month = FALSE))
 }
 invisible(grDevices::dev.off())
 
-summary_note <- paste0("Time variation (diurnal/weekly/monthly) for: ", paste(openair_summary_labels(payload), collapse = ", "))
+period_bits <- if (show_month_panel) "diurnal/weekly/monthly" else "diurnal/weekly (month omitted; span < 60 days)"
+summary_note <- paste0("Time variation (", period_bits, ") for: ", paste(openair_summary_labels(payload), collapse = ", "))
 if (use_normalise) {
   summary_note <- paste0(summary_note, " [normalised by mean — compare diurnal shape, not absolute units]")
 }
