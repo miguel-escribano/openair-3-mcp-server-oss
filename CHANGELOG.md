@@ -6,6 +6,12 @@ This repo is versioned together with [openair-3-mcp-client-plugin-oss](https://g
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-11-20
+
+### Fixed
+
+- `time_plot`: set `ylab` from series units (same pattern as `time_variation`); legend labels use human-readable `name (unit)` via `name.pol`.
+
 ## [0.2.3] - 2026-11-20
 
 ### Fixed

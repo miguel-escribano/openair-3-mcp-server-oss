@@ -16,14 +16,24 @@ payload <- built$payload
 plot_title <- openair_plot_title(payload)
 summary_labs <- openair_summary_labels(payload)
 
+series_list <- payload$series
+units <- unique(Filter(nzchar, vapply(series_list, function(s) {
+  if (!is.null(s$unit)) openair_normalize_label(as.character(s$unit)) else ""
+}, character(1))))
+ylab_text <- if (length(units) == 1) units[[1]] else "value"
+name_pol <- if (length(built$labels) == length(pollutants)) built$labels else pollutants
+
 outfile <- file.path(artifacts_dir, paste0("time_plot_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 1200, height = 600, res = 120)
-if (length(pollutants) > 1) {
-  openair_plot_call(openair::timePlot, df, pollutant = pollutants, main = plot_title, name.pol = pollutants)
-} else {
-  openair_plot_call(openair::timePlot, df, pollutant = pollutants, main = plot_title)
-}
+openair_plot_call(
+  openair::timePlot,
+  df,
+  pollutant = pollutants,
+  main = plot_title,
+  name.pol = name_pol,
+  ylab = ylab_text
+)
 invisible(grDevices::dev.off())
 
 cat(jsonlite::toJSON(list(
