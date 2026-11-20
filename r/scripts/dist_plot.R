@@ -20,7 +20,7 @@ outfile <- file.path(artifacts_dir, paste0("dist_plot_", format(Sys.time(), "%Y%
 
 grDevices::png(outfile, width = 1000, height = 700, res = 120)
 args <- c(
-  list(mydata = df, pollutant = pollutant, main = openair_plot_title(payload)),
+  list(mydata = df, pollutant = pollutant, title = openair_plot_title(payload)),
   openair_dist_plot_extra_args(payload)
 )
 do.call(openair::distPlot, args)

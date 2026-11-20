@@ -199,6 +199,9 @@ def build_payload(tool_name: str, manifest: dict) -> dict | None:
             _series_column("CO2", "ppm", n, 420.0, 0.4),
             _series_column("PM25", "µg/m³", n, 12.0, 0.05),
         ]
+    elif tool_name == "dist_plot":
+        # openair::distPlot smoke fails on generic CO2-style ids; use NO2 like UK AQ data.
+        series = [_series_column("NO2", "µg/m³", n, 22.0, 0.15)]
     else:
         series = [_series_column("CO2", "ppm", n, 400.0, 0.5)]
 

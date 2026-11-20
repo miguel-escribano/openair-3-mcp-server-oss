@@ -11,9 +11,6 @@ meta_args <- list(source = network)
 
 if (!is.null(payload$year)) meta_args$year <- payload$year
 poll <- payload$meta_pollutant
-if (is.null(poll) && !is.null(payload$pollutants) && length(payload$pollutants) > 0) {
-  poll <- payload$pollutants
-}
 if (!is.null(poll) && length(poll) > 0) meta_args$pollutant <- unlist(poll)
 if (!is.null(payload$code) && length(payload$code) > 0) meta_args$code <- unlist(payload$code)
 if (!is.null(payload$site) && length(payload$site) > 0) meta_args$site <- unlist(payload$site)

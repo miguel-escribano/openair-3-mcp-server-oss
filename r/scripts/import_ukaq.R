@@ -12,7 +12,7 @@ start_date <- payload$start_date
 end_date <- payload$end_date
 if (is.null(start_date) || is.null(end_date)) stop("start_date and end_date required (YYYY-MM-DD)")
 
-network <- if (!is.null(payload$network)) payload$network else "aqe"
+source_net <- if (!is.null(payload$network)) payload$network else "aqe"
 year_start <- as.integer(format(as.Date(start_date), "%Y"))
 year_end <- as.integer(format(as.Date(end_date), "%Y"))
 years <- seq(year_start, year_end)
@@ -26,11 +26,13 @@ pollutant_arg <- if (!is.null(payload$pollutants) && length(payload$pollutants) 
 data <- openair::importUKAQ(
   site = site,
   year = years,
-  network = network,
+  source = source_net,
   pollutant = pollutant_arg,
   meta = TRUE
 )
-if (is.null(data) || nrow(data) == 0) stop(paste0("No data returned for site='", site, "' network='", network, "'"))
+if (is.null(data) || nrow(data) == 0) {
+  stop(paste0("No data returned for site='", site, "' source='", source_net, "'"))
+}
 
 dates <- as.POSIXct(data$date, tz = "UTC")
 mask <- dates >= as.POSIXct(start_date, tz = "UTC") & dates <= as.POSIXct(paste0(end_date, " 23:59:59"), tz = "UTC")
