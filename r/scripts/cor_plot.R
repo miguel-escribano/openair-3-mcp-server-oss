@@ -19,7 +19,7 @@ summary_labs <- openair_summary_labels(payload)
 
 use_dendrogram <- FALSE
 if (requireNamespace("legendry", quietly = TRUE)) {
-  if (utils::compareVersion(as.character(packageVersion("legendry")), "0.2.4") >= 0) {
+  if (utils::compareVersion(as.character(packageVersion("legendry")), "0.3.0") >= 0) {
     use_dendrogram <- TRUE
   }
 }
@@ -38,7 +38,7 @@ invisible(grDevices::dev.off())
 
 summary_note <- paste0("Correlation matrix for: ", paste(summary_labs, collapse = ", "))
 if (!use_dendrogram) {
-  summary_note <- paste0(summary_note, " [dendrogram omitted: install R package legendry>=0.2.4 on server]")
+  summary_note <- paste0(summary_note, " [dendrogram omitted: install R package legendry>=0.3.0 on server]")
 }
 
 cat(jsonlite::toJSON(list(

@@ -172,7 +172,7 @@ def health_r() -> dict:
     ok_r, r_msg = r_available()
     ok_o, o_msg = openair_installed() if ok_r else (False, "skipped")
     ok_l, l_msg = (
-        r_package_installed("legendry", "0.2.4") if ok_r else (False, "skipped")
+        r_package_installed("legendry", "0.3.0") if ok_r else (False, "skipped")
     )
     return {
         "r": ok_r,

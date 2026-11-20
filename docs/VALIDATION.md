@@ -4,7 +4,7 @@
 
 - **In repo:** Python smoke (`check_integrations.py`), unit tests (`pytest`), CSV/Excel/upload → prepare pipeline, docs.
 - **Plugin repo (acceptance):** 15-tool Felisa harness against **deployed** MCP — plots, legends, encoding. See [plugin tests/README.md](https://github.com/miguel-escribano/openair-3-mcp-client-plugin-oss/blob/main/tests/README.md).
-- **On your host (when you choose to deploy):** R + openair 3.x for plot/import smoke and IDE end-to-end tests.
+- **On your host (when you choose to deploy):** R + openair **≥ 3.2.0** for plot/import smoke and IDE end-to-end tests.
 - **Not included:** no hosted MCP — bring your own server (localhost, cloud VM, lab, etc.).
 
 Server `fixtures/*.csv` are **pytest samples only** — not Copilot chat data. Golden dataset: plugin `tests/fixtures/felisa_munarriz.json`.
@@ -34,7 +34,7 @@ Optional:
 OPENAIR_SMOKE_NETWORK=1 python check_integrations.py
 ```
 
-Requires R + openair 3.x on the host for plot/import smoke.
+Requires R + openair ≥ 3.2.0 on the host for plot/import smoke.
 
 ## Prepare meta
 

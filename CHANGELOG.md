@@ -6,6 +6,13 @@ This repo is versioned together with [openair-3-mcp-client-plugin-oss](https://g
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-20
+
+### Changed
+
+- Document and validate against **CRAN openair 3.2.0** (ggplot2 4.x backend). Host R must run `openair >= 3.2.0` and `legendry >= 0.3.0` for full `cor_plot` dendrogram support (aligned with openair 3.2.0 Suggests).
+- `health_r` and integration smoke expect `legendry >= 0.3.0`.
+
 ### Added
 
 - `CITATION.cff` — machine-readable citation metadata (GitHub "Cite this repository").

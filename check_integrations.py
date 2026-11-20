@@ -247,7 +247,7 @@ else:
     else:
         results.append((PASS, f"openair installed: {o_msg}"))
 
-        ok_l, l_msg = r_package_installed("legendry", "0.2.4")
+        ok_l, l_msg = r_package_installed("legendry", "0.3.0")
         if ok_l:
             results.append((PASS, f"legendry installed: {l_msg} (cor_plot dendrogram)"))
         else:

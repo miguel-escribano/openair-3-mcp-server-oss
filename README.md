@@ -293,7 +293,7 @@ Requires wind speed (`ws`) and direction (`wd`) in prepared data.
 
 Plot tools return `[text, image]` MCP blocks so clients can show the chart inline. Stats tools return structured JSON.
 
-> **Prerequisite**: R 4.1+ with **openair 3.x** (ggplot2 backend) on the server host. Run `health_r` after install.
+> **Prerequisite**: R 4.1+ with **openair ≥ 3.2.0** (ggplot2 4.x backend) and **legendry ≥ 0.3.0** on the server host. Run `health_r` after install.
 
 ## Running the server
 
