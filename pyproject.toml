@@ -1,6 +1,6 @@
 [project]
 name = "openair-3-mcp"
-version = "0.2.2"
+version = "0.2.3"
 description = "MCP server wrapping the R openair package for air quality analysis"
 readme = "README.md"
 requires-python = ">=3.11"

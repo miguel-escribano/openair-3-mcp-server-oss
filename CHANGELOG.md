@@ -6,6 +6,13 @@ This repo is versioned together with [openair-3-mcp-client-plugin-oss](https://g
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-11-20
+
+### Fixed
+
+- `dist_plot`: coerce series data.frame to tibble before `distPlot()` (openair 3.2 + ggplot2 backend).
+- `import_meta`: site codes like `MY1` use `importMeta(code=)`; `import_ukaq` meta `source` field.
+
 ## [0.2.2] - 2026-11-20
 
 ### Fixed
