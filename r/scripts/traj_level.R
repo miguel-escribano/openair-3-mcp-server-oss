@@ -24,7 +24,7 @@ df <- data.frame(
 outfile <- file.path(artifacts_dir, paste0("traj_level_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 1200, height = 900, res = 120)
-openair::trajLevel(df)
+openair_plot_call(openair::trajLevel, df)
 invisible(grDevices::dev.off())
 
 cat(jsonlite::toJSON(list(

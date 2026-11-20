@@ -38,7 +38,7 @@ mod_cols <- cols[-1]
 outfile <- file.path(artifacts_dir, paste0("taylor_diagram_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 900, height = 900, res = 120)
-openair::TaylorDiagram(df, obs = obs_col, mod = mod_cols)
+openair_plot_call(openair::TaylorDiagram, df, obs = obs_col, mod = mod_cols)
 invisible(grDevices::dev.off())
 
 cat(jsonlite::toJSON(list(

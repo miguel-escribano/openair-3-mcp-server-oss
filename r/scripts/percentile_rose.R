@@ -23,7 +23,7 @@ summary_labs <- openair_summary_labels(payload)
 outfile <- file.path(artifacts_dir, paste0("percentile_rose_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 900, height = 900, res = 120)
-openair::percentileRose(df, pollutant = pollutant, main = plot_title)
+openair_plot_call(openair::percentileRose, df, pollutant = pollutant, main = plot_title)
 invisible(grDevices::dev.off())
 
 cat(jsonlite::toJSON(list(

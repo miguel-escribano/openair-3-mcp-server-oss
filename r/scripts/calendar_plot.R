@@ -19,7 +19,7 @@ summary_labs <- openair_summary_labels(payload)
 outfile <- file.path(artifacts_dir, paste0("calendar_plot_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 1200, height = 800, res = 120)
-openair::calendarPlot(df, pollutant = pollutant, main = openair_plot_title(payload))
+openair_plot_call(openair::calendarPlot, df, pollutant = pollutant, main = openair_plot_title(payload))
 invisible(grDevices::dev.off())
 
 cat(jsonlite::toJSON(list(

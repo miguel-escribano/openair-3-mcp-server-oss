@@ -37,7 +37,7 @@ if (is.null(fn)) {
 }
 if (!is.null(fn)) {
   err <- tryCatch({
-    do.call(fn, list(mydata = df_sub, avg.time = avg_time))
+    do.call(fn, c(list(mydata = df_sub, avg.time = avg_time), openair_plot_extra_args(payload)))
     NULL
   }, error = function(e) e)
   if (!is.null(err)) {

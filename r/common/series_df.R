@@ -385,6 +385,52 @@ openair_req_cols <- function(df, cols) {
   }
 }
 
+#' Optional openair `theme` from plot_options or meta (openair 3.2+).
+openair_plot_theme_value <- function(payload) {
+  theme <- NULL
+  if (!is.null(payload$plot_options) && is.list(payload$plot_options)) {
+    if (!is.null(payload$plot_options$theme)) theme <- payload$plot_options$theme
+  }
+  if (is.null(theme) && !is.null(payload$meta) && is.list(payload$meta)) {
+    if (!is.null(payload$meta$theme)) theme <- payload$meta$theme
+  }
+  if (is.null(theme)) return(NULL)
+  th <- as.character(theme)[1]
+  if (is.na(th) || !nzchar(th)) return(NULL)
+  th
+}
+
+openair_plot_extra_args <- function(payload) {
+  theme <- openair_plot_theme_value(payload)
+  if (is.null(theme)) return(list())
+  list(theme = theme)
+}
+
+#' Call an openair plot function with optional theme from payload.
+openair_plot_call <- function(openair_fn, ...) {
+  dots <- list(...)
+  extra <- openair_plot_extra_args(payload)
+  if (length(extra) > 0) {
+    dots <- c(dots, extra)
+  }
+  do.call(openair_fn, dots)
+}
+
+openair_dist_plot_extra_args <- function(payload) {
+  extra <- openair_plot_extra_args(payload)
+  method <- NULL
+  if (!is.null(payload$plot_options) && is.list(payload$plot_options)) {
+    if (!is.null(payload$plot_options$dist_method)) {
+      method <- payload$plot_options$dist_method
+    }
+  }
+  if (!is.null(method)) {
+    m <- as.character(method)[1]
+    if (!is.na(m) && nzchar(m)) extra$method <- m
+  }
+  extra
+}
+
 #' Filter pollutant names to those present in df; stop if none remain.
 openair_clean_poll <- function(df, polls, allow_empty = FALSE) {
   if (is.null(polls)) polls <- character(0)

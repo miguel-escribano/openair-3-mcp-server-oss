@@ -41,7 +41,7 @@ df[[mod_col]] <- openair_mcp_values(s_mod$values, length(timestamps))
 outfile <- file.path(artifacts_dir, paste0("conditional_quantile_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 900, height = 900, res = 120)
-openair::conditionalQuantile(df, obs = obs_col, mod = mod_col)
+openair_plot_call(openair::conditionalQuantile, df, obs = obs_col, mod = mod_col)
 invisible(grDevices::dev.off())
 
 cat(jsonlite::toJSON(list(

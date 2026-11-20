@@ -24,7 +24,7 @@ df <- data.frame(
 outfile <- file.path(artifacts_dir, paste0("traj_cluster_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 1400, height = 700, res = 120)
-openair::trajCluster(df, n.clusters = 5)
+openair_plot_call(openair::trajCluster, df, n.clusters = 5)
 invisible(grDevices::dev.off())
 
 cat(jsonlite::toJSON(list(

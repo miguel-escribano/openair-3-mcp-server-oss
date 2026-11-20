@@ -27,7 +27,7 @@ if (requireNamespace("legendry", quietly = TRUE)) {
 outfile <- file.path(artifacts_dir, paste0("cor_plot_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 900, height = 900, res = 120)
-openair::corPlot(
+openair_plot_call(openair::corPlot, 
   df,
   pollutants = cols,
   dendrogram = use_dendrogram,

@@ -6,6 +6,18 @@ This repo is versioned together with [openair-3-mcp-client-plugin-oss](https://g
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-20
+
+### Added
+
+- **`dist_plot`** — openair `distPlot()` wrapper; optional `plot_options.dist_method` and `theme`.
+- **`import_meta`** — forwards openair 3.2 `importMeta()` filters (`code`, `site_type`, `meta_pollutant`, `year`, `lat`/`lng`, `max_dist`, `max_n`, `all_meta`, `duplicate`); extended `network` values (`ukaq`, `local`, `imperial`, `all`).
+- **Plot themes** — optional `plot_options.theme` or `meta.theme` on SeriesV1/WindSeriesV1/TrajSeriesV1; passed through `prepare_series_for_openair` to all image tools via `openair_plot_call()`.
+
+### Changed
+
+- `ImportParamsV1` — `site` / `start_date` / `end_date` optional at the contract layer (time-series import R scripts still validate dates).
+
 ## [0.2.0] - 2026-11-20
 
 ### Changed

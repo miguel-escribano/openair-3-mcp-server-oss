@@ -22,7 +22,7 @@ summary_labs <- openair_summary_labels(payload)
 outfile <- file.path(artifacts_dir, paste0("time_prop_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 1200, height = 600, res = 120)
-openair::timeProp(df, pollutant = pollutants[1], proportion = "wd", main = plot_title)
+openair_plot_call(openair::timeProp, df, pollutant = pollutants[1], proportion = "wd", main = plot_title)
 invisible(grDevices::dev.off())
 
 cat(jsonlite::toJSON(list(

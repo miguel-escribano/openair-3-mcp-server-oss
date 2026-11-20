@@ -36,7 +36,18 @@
         "site": { "type": "string" },
         "timezone": { "type": "string" },
         "lat": { "type": "number" },
-        "lon": { "type": "number" }
+        "lon": { "type": "number" },
+        "theme": { "type": "string" }
+      }
+    },
+    "plot_options": {
+      "type": "object",
+      "properties": {
+        "theme": { "type": "string" },
+        "dist_method": {
+          "type": "string",
+          "enum": ["histogram", "freqpoly", "density", "ecdf"]
+        }
       }
     }
   }

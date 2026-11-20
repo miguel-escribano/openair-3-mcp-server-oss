@@ -21,9 +21,9 @@ outfile <- file.path(artifacts_dir, paste0("polar_freq_", format(Sys.time(), "%Y
 
 grDevices::png(outfile, width = 900, height = 900, res = 120)
 if (!is.null(pollutant)) {
-  openair::polarFreq(df, pollutant = pollutant, main = plot_title)
+  openair_plot_call(openair::polarFreq, df, pollutant = pollutant, main = plot_title)
 } else {
-  openair::polarFreq(df)
+  openair_plot_call(openair::polarFreq, df)
 }
 invisible(grDevices::dev.off())
 

@@ -60,7 +60,7 @@ if (length(pollutants) > 1) {
   # sub-panel, so patchwork shows the key 2x (4 entries for 2 series). Build the
   # panels with plot=FALSE, then compose manually keeping the legend on the top
   # weekday row only. conf.int=0.95 is fixed, so the caption is constant.
-  obj <- openair::timeVariation(
+  obj <- openair_plot_call(openair::timeVariation, 
     df,
     pollutant = pollutants,
     normalise = use_normalise,
@@ -85,7 +85,7 @@ if (length(pollutants) > 1) {
 } else {
   # Single series: no overlap/duplication; keep the simple direct render. A lone
   # pollutant otherwise draws a redundant doubled key, so suppress it.
-  openair::timeVariation(
+  openair_plot_call(openair::timeVariation, 
     df,
     pollutant = pollutants,
     normalise = use_normalise,

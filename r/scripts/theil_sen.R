@@ -18,7 +18,7 @@ summary_labs <- openair_summary_labels(payload)
 outfile <- file.path(artifacts_dir, paste0("theil_sen_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 1200, height = 600, res = 120)
-openair::TheilSen(df, pollutant = pollutants[1], main = openair_plot_title(payload))
+openair_plot_call(openair::TheilSen, df, pollutant = pollutants[1], main = openair_plot_title(payload))
 invisible(grDevices::dev.off())
 
 cat(jsonlite::toJSON(list(

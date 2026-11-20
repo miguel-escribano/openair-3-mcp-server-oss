@@ -10,7 +10,7 @@ Pair with **the client plugin** for your IDE: [openair-3-mcp-client-plugin-oss](
 
 **Not affiliated** with [openair-project](https://github.com/openair-project/openair) maintainers.
 
-- **45 tools** — 37 R-backed plots/imports/stats + 8 Python pipeline tools (CSV, Excel, upload, prepare, health, docs)
+- **46 tools** — 38 R-backed plots/imports/stats + 8 Python pipeline tools (CSV, Excel, upload, prepare, health, docs)
 - **2 transports** — **stdio** (IDE and R on the same machine) or **HTTP** (localhost or remote via `mcp-remote`)
 - **Agent skills** — plugin manuals + workflows ([`skills/`](https://github.com/miguel-escribano/openair-3-mcp-client-plugin-oss/tree/main/skills))
 - **Self-hosted** — you choose where R runs; the default path is **local on your own machine**

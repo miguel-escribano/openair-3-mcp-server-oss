@@ -22,11 +22,28 @@ class SeriesMetaV1(BaseModel):
     timezone: str | None = None
     lat: float | None = None
     lon: float | None = None
+    theme: str | None = Field(
+        default=None,
+        description="openair plot theme preset (default, dark, modern, soft, print).",
+    )
 
 
 # ---------------------------------------------------------------------------
 # Public input contracts (one per tool group)
 # ---------------------------------------------------------------------------
+
+class PlotOptionsV1(BaseModel):
+    """Optional styling passed through prepare → plot tools (openair 3.2+)."""
+
+    theme: str | None = Field(
+        default=None,
+        description="openair theme preset: default, dark, modern, soft, print.",
+    )
+    dist_method: Literal["histogram", "freqpoly", "density", "ecdf"] | None = Field(
+        default=None,
+        description="distPlot method when using dist_plot.",
+    )
+
 
 class SeriesV1(BaseModel):
     """Generic time series input. Used by all non-wind plot and stats tools."""
@@ -36,6 +53,10 @@ class SeriesV1(BaseModel):
     )
     series: list[SeriesColumnV1]
     meta: SeriesMetaV1 | None = None
+    plot_options: PlotOptionsV1 | None = Field(
+        default=None,
+        description="Optional plot styling; survives prepare_series_for_openair.",
+    )
 
     @field_validator("series")
     @classmethod
@@ -53,6 +74,7 @@ class WindSeriesV1(BaseModel):
     ws: list[float] = Field(description="Wind speed (m/s), same length as timestamps")
     wd: list[float] = Field(description="Wind direction (degrees, 0–360), same length as timestamps")
     meta: SeriesMetaV1 | None = None
+    plot_options: PlotOptionsV1 | None = None
 
     @field_validator("series")
     @classmethod
@@ -76,22 +98,58 @@ class TrajSeriesV1(BaseModel):
         description="Optional trajectory identifier for multi-trajectory datasets"
     )
     meta: SeriesMetaV1 | None = None
+    plot_options: PlotOptionsV1 | None = None
 
 
 class ImportParamsV1(BaseModel):
     """Parameters for data import from public networks (AURN, Europe, etc.)."""
 
-    site: str | list[str] = Field(
-        description="Site code(s) to import, e.g. 'MY1' for Marylebone Road"
+    site: str | list[str] | None = Field(
+        default=None,
+        description="Site code(s) for import or import_meta pattern match",
     )
-    start_date: str = Field(description="Start date YYYY-MM-DD")
-    end_date: str = Field(description="End date YYYY-MM-DD")
+    start_date: str | None = Field(default=None, description="Start date YYYY-MM-DD (import tools)")
+    end_date: str | None = Field(default=None, description="End date YYYY-MM-DD (import tools)")
     pollutants: list[str] | None = Field(
         default=None,
         description="Pollutant codes to import. None = all available."
     )
-    network: Literal["aurn", "aqe", "saqn", "waqn", "ni", "europe"] = "aurn"
+    network: Literal[
+        "aurn",
+        "aqe",
+        "saqn",
+        "waqn",
+        "ni",
+        "europe",
+        "local",
+        "imperial",
+        "ukaq",
+        "all",
+    ] = "aurn"
     resolution: Literal["hour", "day", "month", "year"] = "hour"
+    # importMeta (openair 3.2+) — optional filters; ignored by time-series import tools.
+    code: str | list[str] | None = Field(default=None, description="Exact site code filter")
+    site_type: str | list[str] | None = None
+    meta_pollutant: str | list[str] | None = Field(
+        default=None,
+        description="Sites measuring these pollutants (import_meta)",
+    )
+    year: int | list[int] | None = Field(
+        default=None,
+        description="Year or range — sites open in that period (import_meta)",
+    )
+    lat: float | None = Field(default=None, description="Target latitude for import_meta distance sort")
+    lng: float | None = Field(default=None, description="Target longitude for import_meta distance sort")
+    max_dist: float | None = Field(default=None, description="Max distance (km) from lat/lng (import_meta)")
+    max_n: int | None = Field(default=None, description="Max sites when lat/lng set (import_meta)")
+    all_meta: bool | None = Field(
+        default=None,
+        description="Return full pollutant metadata per site (import_meta)",
+    )
+    duplicate: bool | None = Field(
+        default=None,
+        description="Keep duplicate sites across networks (import_meta)",
+    )
 
 
 class ImportFileParamsV1(BaseModel):

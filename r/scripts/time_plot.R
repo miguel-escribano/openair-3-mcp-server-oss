@@ -20,9 +20,9 @@ outfile <- file.path(artifacts_dir, paste0("time_plot_", format(Sys.time(), "%Y%
 
 grDevices::png(outfile, width = 1200, height = 600, res = 120)
 if (length(pollutants) > 1) {
-  openair::timePlot(df, pollutant = pollutants, main = plot_title, name.pol = pollutants)
+  openair_plot_call(openair::timePlot, df, pollutant = pollutants, main = plot_title, name.pol = pollutants)
 } else {
-  openair::timePlot(df, pollutant = pollutants, main = plot_title)
+  openair_plot_call(openair::timePlot, df, pollutant = pollutants, main = plot_title)
 }
 invisible(grDevices::dev.off())
 

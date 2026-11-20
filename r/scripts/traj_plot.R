@@ -24,7 +24,7 @@ df <- data.frame(
 outfile <- file.path(artifacts_dir, paste0("traj_plot_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 1200, height = 900, res = 120)
-openair::trajPlot(df)
+openair_plot_call(openair::trajPlot, df)
 invisible(grDevices::dev.off())
 
 cat(jsonlite::toJSON(list(

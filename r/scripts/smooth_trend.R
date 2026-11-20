@@ -24,7 +24,7 @@ avg_time <- if (!is.null(payload$avg_time) && nzchar(as.character(payload$avg_ti
 outfile <- file.path(artifacts_dir, paste0("smooth_trend_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 1200, height = 600, res = 120)
-openair::smoothTrend(
+openair_plot_call(openair::smoothTrend, 
   df,
   pollutant = pollutants,
   avg.time = avg_time,

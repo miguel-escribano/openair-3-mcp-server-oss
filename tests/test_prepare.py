@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from openair_mcp.contracts import SeriesColumnV1, SeriesMetaV1, SeriesV1
+from openair_mcp.contracts import PlotOptionsV1, SeriesColumnV1, SeriesMetaV1, SeriesV1
 from openair_mcp.prepare import prepare_series_for_openair
 
 
@@ -73,6 +73,15 @@ def test_prepare_raw_5m_accepted():
     assert "error" not in prep
     assert prep["granularity_effective"] == "raw_5m"
     assert len(prep["timestamps"]) == 3
+
+
+def test_prepare_preserves_plot_options():
+    data = _felisa_series().model_copy(
+        update={"plot_options": PlotOptionsV1(theme="modern", dist_method="density")}
+    )
+    prep = prepare_series_for_openair(data=data, granularity="hourly")
+    assert prep["plot_options"]["theme"] == "modern"
+    assert prep["plot_options"]["dist_method"] == "density"
 
 
 def test_prepare_invalid_granularity_error():

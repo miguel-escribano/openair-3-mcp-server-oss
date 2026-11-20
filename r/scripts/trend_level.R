@@ -18,7 +18,7 @@ summary_labs <- openair_summary_labels(payload)
 outfile <- file.path(artifacts_dir, paste0("trend_level_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".png"))
 
 grDevices::png(outfile, width = 1200, height = 700, res = 120)
-openair::trendLevel(df, pollutant = pollutant, main = openair_plot_title(payload))
+openair_plot_call(openair::trendLevel, df, pollutant = pollutant, main = openair_plot_title(payload))
 invisible(grDevices::dev.off())
 
 cat(jsonlite::toJSON(list(

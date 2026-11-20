@@ -208,7 +208,11 @@ def _prepare_series_for_openair(
         meta_out = {"source": "file"}
     meta_out["timezone"] = timezone_name
 
-    return {
+    plot_options_out: dict | None = None
+    if data.plot_options:
+        plot_options_out = data.plot_options.model_dump(mode="json", exclude_none=True)
+
+    result_body = {
         "series_name": normalize_label(primary.name),
         "unit": normalize_label(primary.unit) if primary.unit else primary.unit,
         "series_names": [col["name"] for col in prepared_columns],
@@ -228,3 +232,6 @@ def _prepare_series_for_openair(
         "meta": meta_out,
         "warnings": warnings,
     }
+    if plot_options_out:
+        result_body["plot_options"] = plot_options_out
+    return result_body
